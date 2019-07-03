@@ -2,45 +2,40 @@
 #define MM_OBJECT_BASE_H
 
 #include "MM_Config.h"
-#include "MM_Manager.h"
 
-#include <sstream>
-#include <string>
-
-class MM_Manager;
-
-template<class T>
-std::string toString(const T &value) 
-{
-    std::ostringstream os;
-    os << value;
-    return os.str();
-}
+void ToString(char* buffer, int value);
+void ToString(char* buffer, unsigned value);
+void ToString(char* buffer, float value);
+void ToString(char* buffer, double value);
+void ToString(char* buffer, char* value);
 
 class ObjectInterface
 {
 	public:
-		virtual const char* StringValue() = 0;
+		virtual void StringValue(char * buffer) = 0;
 		// virtual bool PrintConfig() = 0;
 };
 
 template<typename T>
-class MM_Object_Base : ObjectInterface
+class MM_Object_Base : public ObjectInterface
 {
 	public:
 		const char* name; // the name of the object as will appear in MM app
 
-		MM_Object_Base(MM_Manager& _Manager, const char* _name, const T& _value)
+		MM_Object_Base(const char* _name, const T& _value)
 		: name(_name)
 		, val(_value)
-		, Manager(_Manager)
 		{
-			Manager.Add(this);
 		}
 
-		const char* StringValue()
+		MM_Object_Base(const char* _name)
+		: name(_name)
 		{
-			return toString(val).c_str();
+		}
+
+		void StringValue(char * buffer)
+		{
+			ToString(buffer, val);
 		}
 
 		// Value (Getter)
@@ -74,7 +69,6 @@ class MM_Object_Base : ObjectInterface
 
 	private:
 		T val; // RAM value of the  Object
-		MM_Manager& Manager;
 };
 
 #endif
