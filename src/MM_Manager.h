@@ -21,6 +21,11 @@ class MM_Manager
 		// \param [char] c - The latest read character from the Serial Stream
 		void Read(char c);
 
+		// OnReady
+		// Register a callback funciton to run after READY is sent to the app
+		// \param[func] OnReady - callback, must accept void param and return void
+		void OnReady(void (*_OnReady)());
+
 		void test();
 
 	private:
@@ -43,6 +48,7 @@ class MM_Manager
 		// Message Handler
 		// Interprets messages interfaces with MM_Objects and sends responses to the app.
 		void MessageHandler();
+		void (*onReady)();
 
 };
 

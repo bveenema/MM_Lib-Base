@@ -20,6 +20,11 @@ bool MM_Manager::Add(ObjectInterface& Object)
     return true;
 }
 
+void MM_Manager::OnReady(void (*_OnReady)())
+{
+	onReady = _OnReady;
+}
+
 void MM_Manager::Read(char c)
 {
     /*
@@ -49,7 +54,7 @@ void MM_Manager::Read(char c)
 		messageIndex = 0; // reset buffer position
 	}
 
-	else // \n character
+	else // \n character (End transmission signifier)
 	{
 		messageBuffer[messageIndex] = 0; // Null terminate string
 		if(FLAG_isWrite)
@@ -75,29 +80,46 @@ void MM_Manager::MessageHandler()
 
 	if(commandNum == 0) // keyBuffer was string
 	{
-		if(strcmp(keyBuffer, "MICROMANAGER")) // App sends micro manager when first connected, send "READY" as response
+		if(strcmp(keyBuffer, "MICROMANAGER") == 0) // App sends micro manager when first connected, send "READY" as response
 		{
-			MM_Serial_Print("READY\n");
+			MM_Serial_Print("READY\r\n");
+			onReady(); // call onReady callback
 		}
-		else if(strcmp(keyBuffer, "CONFIG")) // App is requesting the configuration JSON string
+		else if(strcmp(keyBuffer, "CONFIG") == 0) // App is requesting the configuration JSON string
 		{
-			char ConfigJSON[1024] = "{\"baud\":9600,\"name\":\"DeviceName\",\"settings\":[{\"n\":\"SettingName\",\"t\":\"SettingType\",\"c\":1,\"l\":20,\"h\":30,\"d\":20,\"r\":22,\"f\":0,\"i\":\"SettingUnit\"},],\"state\":[{\"n\":\"StateName\",\"t\":\"StateType\",\"c\":7,\"l\":0,\"h\":25,\"u\":250},]}";
+			char ConfigJSON[1024] = "CONFIG:{\"baud\":9600,\"name\":\"Amphora\",\"settings\":[{\"n\":\"Volume\",\"t\":\"slider\",\"c\":1,\"l\":20,\"h\":30,\"d\":20,\"r\":22,\"f\":0,\"i\":\"dB\"},{\"n\":\"MotorSeed\",\"t\":\"input\",\"c\":3,\"l\":0,\"h\":10,\"d\":1,\"r\":2,\"f\":0,\"i\":\"RPM\"},{\"n\":\"Direction\",\"t\":\"picker\",\"c\":5,\"d\":\"Left\",\"r\":\"Right\",\"o\":[\"Left\",\"Right\",\"Up\",\"Down\"]}],\"state\":[{\"n\":\"Temperature\",\"t\":\"output\",\"c\":8,\"l\":50,\"h\":90,\"u\":3000},{\"n\":\"Reset\",\"t\":\"button\",\"c\":10,\"b\":\"warning\",\"u\":10000},{\"n\":\"Light\",\"t\":\"toggle\",\"c\":12,\"u\":5000},{\"n\":\"LongProcess\",\"t\":\"process\",\"c\":14,\"u\":3000}]}\r\n";
 			//TODO compile JSON string
 			MM_Serial_Print(ConfigJSON);
 		}
+		else
+		{
+			MM_Serial_Print("ERROR: INVALID STRING COMMAND");
+		}
 	}
-	else // keyBuffer was a command
+	else if(commandNum < CommandMap.size)// keyBuffer was a command and in range of valid MM_Objects
 	{
-		
+		// Retrive string value the MM_Object corresponding to the command
+		char valBuffer[64];
+        CommandMap.objects[commandNum]->sValue(valBuffer);
+
+		// Format and return Output
+		char buffer[128];
+		sprintf(buffer, "%d:%s\r\n", commandNum, valBuffer);
+		MM_Serial_Print(buffer);
+	}
+	else // invalid command key
+	{
+		MM_Serial_Print("ERROR: INVALID COMMAND NUMBER");
 	}
 
+	valueBuffer[0] = 0; // reset the value buffer
 	FLAG_NoRead = false; // Allow new messages
 }
 
 void MM_Manager::test()
 {
     char buffer[100];
-    sprintf(buffer, "CommandMap:\n"
+    sprintf(buffer, "0:CommandMap:\n"
                     "  size: %d\n"
                     "  max size: %d\n"
                     "  Elements:\n", CommandMap.size, CommandMap.max_size);
@@ -105,7 +127,7 @@ void MM_Manager::test()
     {
         char valBuffer[12];
         CommandMap.objects[i]->sValue(valBuffer);
-        sprintf(buffer + strlen(buffer), "    %s\n", valBuffer);
+        sprintf(buffer + strlen(buffer), "    %s\r\n", valBuffer);
     }
     
     MM_Serial_Print(buffer);
