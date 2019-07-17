@@ -16,9 +16,24 @@ class MM_Manager
 		// \return [bool] - false if out of bounds, true if added
 		bool Add(ObjectInterface& Object);
 
+		// Read
+		// Reads and interprets character stream. Calls Message Handler when completed message is recieved
+		// \param [char] c - The latest read character from the Serial Stream
+		void Read(char c);
+
 		void test();
 
 	private:
+		// Message Variables
+		const size_t messageBufferSize = 128;
+		char messageBuffer[128];
+		char keyBuffer[32];
+		char valueBuffer[64];
+		uint8_t messageIndex = 0;
+		bool FLAG_isWrite = false;
+		bool FLAG_NoRead = false;
+		
+		// Command Map Definition
 		struct {
 			ObjectInterface** objects = nullptr;
 			unsigned size = 0;

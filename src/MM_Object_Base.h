@@ -12,7 +12,7 @@ void ToString(char* buffer, char* value);
 class ObjectInterface
 {
 	public:
-		virtual void StringValue(char * buffer) = 0;
+		virtual void sValue(char * buffer) = 0;
 		// virtual bool PrintConfig() = 0;
 };
 
@@ -33,7 +33,7 @@ class MM_Object_Base : public ObjectInterface
 		{
 		}
 
-		void StringValue(char * buffer)
+		void sValue(char * buffer)
 		{
 			ToString(buffer, val);
 		}
