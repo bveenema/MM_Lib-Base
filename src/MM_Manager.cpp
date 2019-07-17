@@ -66,6 +66,34 @@ void MM_Manager::Read(char c)
 		MessageHandler();
 	}
 }
+
+void MM_Manager::MessageHandler()
+{
+	FLAG_NoRead = true; // Prevent reading new strings into key and value buffer while Handler is running
+
+	unsigned commandNum = atol(keyBuffer); // Attempt to convert the key to a number
+
+	if(commandNum == 0) // keyBuffer was string
+	{
+		if(strcmp(keyBuffer, "MICROMANAGER")) // App sends micro manager when first connected, send "READY" as response
+		{
+			MM_Serial_Print("READY\n");
+		}
+		else if(strcmp(keyBuffer, "CONFIG")) // App is requesting the configuration JSON string
+		{
+			char ConfigJSON[1024] = "{\"baud\":9600,\"name\":\"DeviceName\",\"settings\":[{\"n\":\"SettingName\",\"t\":\"SettingType\",\"c\":1,\"l\":20,\"h\":30,\"d\":20,\"r\":22,\"f\":0,\"i\":\"SettingUnit\"},],\"state\":[{\"n\":\"StateName\",\"t\":\"StateType\",\"c\":7,\"l\":0,\"h\":25,\"u\":250},]}";
+			//TODO compile JSON string
+			MM_Serial_Print(ConfigJSON);
+		}
+	}
+	else // keyBuffer was a command
+	{
+		
+	}
+
+	FLAG_NoRead = false; // Allow new messages
+}
+
 void MM_Manager::test()
 {
     char buffer[100];

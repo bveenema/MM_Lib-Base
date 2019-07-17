@@ -40,6 +40,10 @@ class MM_Manager
 			unsigned max_size = 0;
 		} CommandMap;
 
+		// Message Handler
+		// Interprets messages interfaces with MM_Objects and sends responses to the app.
+		void MessageHandler();
+
 };
 
 #endif
