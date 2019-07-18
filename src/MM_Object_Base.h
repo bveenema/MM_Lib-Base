@@ -67,7 +67,7 @@ class MM_Object_Base : public ObjectInterface
 		const T& operator *= (const T& _value) { val *= _value; return val; }
 		const T& operator /= (const T& _value) { val /= _value; return val; }
 
-	private:
+	protected:
 		T val; // RAM value of the  Object
 };
 
