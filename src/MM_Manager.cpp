@@ -114,7 +114,7 @@ void MM_Manager::MessageHandler()
 		}
 		else
 		{
-			MM_Serial_Print("ERROR: INVALID STRING COMMAND");
+			DebugPrintf("ERROR: INVALID STRING COMMAND");
 		}
 	}
 	else if(commandNum < CommandMap.size)// keyBuffer was a command and in range of valid MM_Objects
@@ -130,7 +130,7 @@ void MM_Manager::MessageHandler()
 	}
 	else // invalid command key
 	{
-		MM_Serial_Print("ERROR: INVALID COMMAND NUMBER");
+		DebugPrintf("ERROR: INVALID COMMAND NUMBER");
 	}
 
 	valueBuffer[0] = 0; // reset the value buffer
