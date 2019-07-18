@@ -58,14 +58,14 @@ class MM_Object_Base : public ObjectInterface
 		// \return [const T&], returns const ref to val to prevent caller from modifying
 		operator const T& () const { return val; }
 
-		// Assignment Operator
+		// Assignment Operators
 		// \param [T&] value, the new val to assign to base
 		// \return [const T&], returns const ref to val instead of copy
-		const T& operator = (const T& _value)
-		{
-			val = _value;
-			return val;
-		}
+		const T& operator = (const T& _value) { val = _value; return val; }
+		const T& operator += (const T& _value) { val += _value; return val; }
+		const T& operator -= (const T& _value) { val -= _value; return val; }
+		const T& operator *= (const T& _value) { val *= _value; return val; }
+		const T& operator /= (const T& _value) { val /= _value; return val; }
 
 	private:
 		T val; // RAM value of the  Object
