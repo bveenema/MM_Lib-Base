@@ -3,8 +3,6 @@
 
 #include "MM_Object_Base.h"
 
-#include <stdio.h>
-
 class MM_Manager
 {
 	public:
@@ -25,6 +23,12 @@ class MM_Manager
 		// Register a callback funciton to run after READY is sent to the app
 		// \param[func] OnReady - callback, must accept void param and return void
 		void OnReady(void (*_OnReady)());
+
+		// DebugPrintf
+		// Formats a message to send to the debug window in MicroManager
+		// \param[string] format
+		// \param[...] args
+		void DebugPrintf(const char* format, ...);
 
 		void test();
 

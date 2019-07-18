@@ -2,6 +2,8 @@
 #include "MM_Manager.h"
 
 #include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
 
 MM_Manager::MM_Manager(const size_t numObjects)
 {
@@ -18,6 +20,23 @@ bool MM_Manager::Add(ObjectInterface& Object)
     CommandMap.objects[CommandMap.size] = &Object;
     CommandMap.size += 1;
     return true;
+}
+
+void MM_Manager::DebugPrintf(const char* format, ...)
+{
+	// Add "0:" (Debug Designator) to beginning of output string
+	char outputBuffer[1024] = "0:"; 
+
+	// Concatenate format to output string and apply the args
+	va_list args;
+	va_start(args, format);
+		vsprintf(outputBuffer + strlen(outputBuffer), format, args);
+	va_end(args);
+	
+	// Add "\r\n" (end message designator) to end of output string
+	strcat(outputBuffer, "\r\n");
+
+	MM_Serial_Print(outputBuffer);
 }
 
 void MM_Manager::OnReady(void (*_OnReady)())
@@ -78,6 +97,8 @@ void MM_Manager::MessageHandler()
 
 	unsigned commandNum = atol(keyBuffer); // Attempt to convert the key to a number
 
+	DebugPrintf("Recieved: %s:%s", keyBuffer, valueBuffer);
+
 	if(commandNum == 0) // keyBuffer was string
 	{
 		if(strcmp(keyBuffer, "MICROMANAGER") == 0) // App sends micro manager when first connected, send "READY" as response
@@ -119,7 +140,7 @@ void MM_Manager::MessageHandler()
 void MM_Manager::test()
 {
     char buffer[100];
-    sprintf(buffer, "0:CommandMap:\n"
+    sprintf(buffer, "CommandMap:\n"
                     "  size: %d\n"
                     "  max size: %d\n"
                     "  Elements:\n", CommandMap.size, CommandMap.max_size);
@@ -127,8 +148,7 @@ void MM_Manager::test()
     {
         char valBuffer[12];
         CommandMap.objects[i]->sValue(valBuffer);
-        sprintf(buffer + strlen(buffer), "    %s\r\n", valBuffer);
+        sprintf(buffer + strlen(buffer), "    %s\n", valBuffer);
     }
-    
-    MM_Serial_Print(buffer);
+	DebugPrintf(buffer);
 }
