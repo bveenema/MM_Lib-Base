@@ -39,7 +39,7 @@ void MM_Manager::DebugPrintf(const char* format, ...)
 	MM_Serial_Print(outputBuffer);
 }
 
-void MM_Manager::OnReady(void (*_OnReady)())
+void MM_Manager::OnReady(std::function<void()> _OnReady)
 {
 	onReady = _OnReady;
 }
@@ -97,14 +97,12 @@ void MM_Manager::MessageHandler()
 
 	unsigned commandNum = atol(keyBuffer); // Attempt to convert the key to a number
 
-	DebugPrintf("Recieved: %s:%s", keyBuffer, valueBuffer);
-
 	if(commandNum == 0) // keyBuffer was string
 	{
 		if(strcmp(keyBuffer, "MICROMANAGER") == 0) // App sends micro manager when first connected, send "READY" as response
 		{
 			MM_Serial_Print("READY\r\n");
-			onReady(); // call onReady callback
+			if(onReady) onReady(); // call onReady callback
 		}
 		else if(strcmp(keyBuffer, "CONFIG") == 0) // App is requesting the configuration JSON string
 		{

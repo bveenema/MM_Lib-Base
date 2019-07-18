@@ -2,6 +2,7 @@
 #define MM_MANAGER_H
 
 #include "MM_Object_Base.h"
+#include <functional>
 
 class MM_Manager
 {
@@ -22,12 +23,12 @@ class MM_Manager
 		// OnReady
 		// Register a callback funciton to run after READY is sent to the app
 		// \param[func] OnReady - callback, must accept void param and return void
-		void OnReady(void (*_OnReady)());
+		void OnReady(std::function<void()> _OnReady);
 
 		// DebugPrintf
 		// Formats a message to send to the debug window in MicroManager
-		// \param[string] format
-		// \param[...] args
+		// \param[string] format - The string with format specifiers
+		// \param[...] args - values to fill in the format specifiers in the string
 		void DebugPrintf(const char* format, ...);
 
 		void test();
@@ -52,7 +53,9 @@ class MM_Manager
 		// Message Handler
 		// Interprets messages interfaces with MM_Objects and sends responses to the app.
 		void MessageHandler();
-		void (*onReady)();
+
+		// Callback functions
+		std::function<void()> onReady = nullptr;
 
 };
 
