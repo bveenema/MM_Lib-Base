@@ -13,7 +13,7 @@ class ObjectInterface
 {
 	public:
 		virtual void sValue(char * buffer) = 0;
-		// virtual bool PrintConfig() = 0;
+		virtual void sConfig(char * buffer) = 0;
 };
 
 template<typename T>

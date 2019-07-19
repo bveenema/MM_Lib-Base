@@ -137,16 +137,25 @@ void MM_Manager::MessageHandler()
 
 void MM_Manager::test()
 {
-    char buffer[100];
-    sprintf(buffer, "CommandMap:\n"
-                    "  size: %d\n"
-                    "  max size: %d\n"
-                    "  Elements:\n", CommandMap.size, CommandMap.max_size);
-    for(unsigned i=0; i<CommandMap.size; i++)
-    {
-        char valBuffer[12];
-        CommandMap.objects[i]->sValue(valBuffer);
-        sprintf(buffer + strlen(buffer), "    %s\n", valBuffer);
-    }
-	DebugPrintf(buffer);
+	for(unsigned i=0; i<CommandMap.size; i++)
+	{
+		char buffer[256];
+		CommandMap.objects[i]->sConfig(buffer);
+		sprintf(buffer + strlen(buffer), ",\"c\":%u}\n", i+1);
+		DebugPrintf(buffer);
+	}
+	
+
+    // char buffer[100];
+    // sprintf(buffer, "CommandMap:\n"
+    //                 "  size: %d\n"
+    //                 "  max size: %d\n"
+    //                 "  Elements:\n", CommandMap.size, CommandMap.max_size);
+    // for(unsigned i=0; i<CommandMap.size; i++)
+    // {
+    //     char valBuffer[12];
+    //     CommandMap.objects[i]->sValue(valBuffer);
+    //     sprintf(buffer + strlen(buffer), "    %s\n", valBuffer);
+    // }
+	// DebugPrintf(buffer);
 }
