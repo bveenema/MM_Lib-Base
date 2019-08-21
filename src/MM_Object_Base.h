@@ -2,18 +2,14 @@
 #define MM_OBJECT_BASE_H
 
 #include "MM_Config.h"
-
-void ToString(char* buffer, int value);
-void ToString(char* buffer, unsigned value);
-void ToString(char* buffer, float value);
-void ToString(char* buffer, double value);
-void ToString(char* buffer, char* value);
+#include "MM_Util.h"
 
 class ObjectInterface
 {
 	public:
 		virtual void sValue(char * buffer) = 0;
 		virtual void sConfig(char * buffer) = 0;
+		virtual void sUpdate(char * buffer) = 0;
 };
 
 template<typename T>
@@ -36,6 +32,11 @@ class MM_Object_Base : public ObjectInterface
 		void sValue(char * buffer)
 		{
 			ToString(buffer, val);
+		}
+
+		void sUpdate(char * buffer)
+		{
+			val = ToValue(buffer, val);
 		}
 
 		// Value (Getter)
