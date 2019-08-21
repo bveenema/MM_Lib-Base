@@ -18,6 +18,8 @@ class MM_Input : public MM_Object_Base<T>
 		{
 		}
 
+		char unit[16] = "";
+
 		void sConfig(char * buffer)
 		{
 			// Create JSON Object
@@ -55,20 +57,10 @@ class MM_Input : public MM_Object_Base<T>
 		}
 
 		// min, max and default paramaters
-		struct 
-		{
-			T value;
-			bool defined = false;
-
-			const T& operator = (const T& _value) { value = _value; }
-			operator const T& () const { return value; }
-		} min, max, def;
+		MM_Object_Parameter<T> min, max, def;
 
 		// Overload functions included from MM_Util.h
 		MM_OVERLOADS
-
-	private:
-		char unit[16] = "";
 };
 
 #endif
